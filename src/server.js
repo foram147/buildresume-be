@@ -4,46 +4,26 @@ import cors from "cors";
 
 import listEndpoints from "express-list-endpoints";
 
-import { errorHandlers } from "./errorHandlers.js";
+import templatesRouter from "./template/index.js"
 
-import path, { dirname } from "path";
-
-import { fileURLToPath } from "url";
+//import { errorHandlers } from "./errorHandlers.js";
 
 import mongoose from "mongoose";
 
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = dirname(__filename);
-
-const publicDirectory = path.join(__dirname, "../public");
-
+// ***************************** MIDDLEWARS**************************
 const server = express();
-
+server.use(cors())
 const { PORT, MONGO_CONNECTION_STRING } = process.env;
-const whiteList = ["http://localhost:3000"];
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (whiteList.some((allowedUrl) => allowedUrl === origin)) {
-      callback(null, true);
-    } else {
-      const error = new Error("Not allowed by cors!");
-      error.status = 403;
-
-      callback(error);
-    }
-  },
-};
-
-server.use(cors(corsOptions));
-
 server.use(express.json());
 
-server.use(express.static(publicDirectory));
 
-server.use(errorHandlers);
+// ****************************** ROUTES *****************************
 
-console.log(listEndpoints(server));
+server.use("/templates",templatesRouter)
+
+//server.use(errorHandlers);
+
+console.table(listEndpoints(server)); 
 
 server.listen(PORT, async () => {
   try {
