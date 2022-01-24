@@ -4,11 +4,12 @@ import cors from "cors";
 
 import listEndpoints from "express-list-endpoints";
 
-import userRouter from "./user/index.js"
+import userRouter from "./services/user/index.js"
 
 //import { errorHandlers } from "./errorHandlers.js";
 
 import mongoose from "mongoose";
+import experienceRouter from "./services/experience/index.js";
 
 // ***************************** MIDDLEWARS**************************
 const server = express();
@@ -20,6 +21,7 @@ server.use(express.json());
 // ****************************** ROUTES *****************************
 
 server.use("/user", userRouter)
+server.use("/user",experienceRouter)
 
 //server.use(errorHandlers);
 

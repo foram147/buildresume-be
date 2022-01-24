@@ -3,9 +3,9 @@ import UserSchema from "./schema.js";
 import mongoose from "mongoose";
 import createHttpError from "http-errors";
 import q2m from "query-to-mongo";
-import { generateCVPDF } from "../utils/pdf/index.js";
+import { generateCVPDF } from "../../utils/pdf/index.js";
 import { pipeline } from "stream";
-import { uploadProfilePicture } from "../utils/upload/index.js";
+import { uploadProfilePicture } from "../../utils/upload/index.js";
 //import { checkBlogPostSchema, checkValidationResult } from "./validation.js";
 
 const userRouter = express.Router();

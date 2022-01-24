@@ -16,7 +16,6 @@ const UserSchema = new Schema(
       personalstatement: { type: String, required: true },
       skills: { type: String, required: true },
       hobbies: { type: String, required: true },
-      experience: { type: String, required: true },
       education: { type: String, required: true },
       
   },
