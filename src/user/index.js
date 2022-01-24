@@ -8,10 +8,10 @@ import { pipeline } from "stream";
 import { uploadProfilePicture } from "../utils/upload/index.js";
 //import { checkBlogPostSchema, checkValidationResult } from "./validation.js";
 
-const templatesRouter = express.Router();
+const userRouter = express.Router();
 
 // get all template
-templatesRouter.get("/", async (req, res, next) => {
+userRouter.get("/", async (req, res, next) => {
   try {
     const mongoQuery = q2m(req.query)
     const {total, user} = await UserSchema.findCVByUserName(mongoQuery)
@@ -28,7 +28,7 @@ templatesRouter.get("/", async (req, res, next) => {
   }
 });
 
-templatesRouter.post(
+userRouter.post(
     "/",
     //checkBlogPostSchema,
     //checkValidationResult,
@@ -45,7 +45,7 @@ templatesRouter.post(
   );
 
 
-  templatesRouter.post(
+  userRouter.post(
     "/:id/picture",
     uploadProfilePicture,
     async (req, res, next) => {
@@ -69,7 +69,7 @@ templatesRouter.post(
   );
 
 
-  templatesRouter.get("/:id", async (req, res, next) => {
+  userRouter.get("/:id", async (req, res, next) => {
     try {
       const template = await UserSchema.findById(req.params.id);
       if (!template) {
@@ -84,15 +84,15 @@ templatesRouter.post(
     }
   });
 
-  templatesRouter.delete("/:id", async (req, res, next) => {
+  userRouter.delete("/:id", async (req, res, next) => {
     try {
-      const template = await TemplateSchema.findById(req.params.id);
+      const template = await UserSchema.findById(req.params.id);
       if (!template) {
         res
           .status(404)
           .send({ message: `Template with ${req.params.id} is not found!` });
       } else {
-        await TemplateSchema.findByIdAndDelete(req.params.id);
+        await UserSchema.findByIdAndDelete(req.params.id);
         res.status(204).send();
       }
     } catch (error) {
@@ -100,9 +100,9 @@ templatesRouter.post(
     }
   });
 
-  templatesRouter.put("/:id", async (req, res, next) => {
+  userRouter.put("/:id", async (req, res, next) => {
     try {
-      const updated = await TemplateSchema.findByIdAndUpdate(req.params.id, req.body, {
+      const updated = await UserSchema.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
       res.send(updated);
@@ -111,7 +111,7 @@ templatesRouter.post(
     }
   });
   
-  templatesRouter.get("/:id/PDF", async (req, res, next) =>{
+  userRouter.get("/:id/PDF", async (req, res, next) =>{
     try{
           const user = await UserSchema.findById(req.params.id)
 
@@ -132,5 +132,5 @@ templatesRouter.post(
   })
 
 
-  export default templatesRouter;
+  export default userRouter;
   

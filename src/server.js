@@ -4,7 +4,7 @@ import cors from "cors";
 
 import listEndpoints from "express-list-endpoints";
 
-import templatesRouter from "./template/index.js"
+import userRouter from "./user/index.js"
 
 //import { errorHandlers } from "./errorHandlers.js";
 
@@ -19,7 +19,7 @@ server.use(express.json());
 
 // ****************************** ROUTES *****************************
 
-server.use("/templates",templatesRouter)
+server.use("/user", userRouter)
 
 //server.use(errorHandlers);
 

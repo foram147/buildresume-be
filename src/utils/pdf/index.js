@@ -15,11 +15,11 @@ const printer = new PdfPrinter(fonts);
 
 export const generateCVPDF = async (user) => {
   let imagePart = {};
-  if (user.cover) {
-    const response = await axios.get(user.cover, {
+  if (user.image) {
+    const response = await axios.get(user.image, {
       responseType: "arraybuffer",
     });
-    const userCoverURLParts = user.cover.split("/");
+    const userCoverURLParts = user.image.split("/");
     const fileName = userCoverURLParts[userCoverURLParts.length - 1];
     const [id, extension] = fileName.split(".");
     const base64 = response.data.toString("base64");
@@ -29,8 +29,18 @@ export const generateCVPDF = async (user) => {
   const docDefinition = {
     content: [
       imagePart,
-      { text: user.title, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
-      { text: striptags(user.category), lineHeight: 2 },
+      { text: user.name, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.job, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.postaladdress, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.email, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.mobile, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.dob, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.personalstatement, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.skills, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.hobbies, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.experience, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      { text: user.education, fontSize: 20, bold: true, margin: [0, 0, 0, 40] },
+      //{ text: striptags(user.job), lineHeight: 2 },
     ],
   };
 
