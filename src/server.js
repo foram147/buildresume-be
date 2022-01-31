@@ -10,7 +10,9 @@ import userRouter from "./services/user/index.js"
 
 import mongoose from "mongoose";
 import experienceRouter from "./services/experience/index.js";
-
+import educationRouter from "./services/education/index.js";
+import authRouter from "./services/auth/index.js";
+import ProfileRouter from "./services/profile/index.js"
 // ***************************** MIDDLEWARS**************************
 const server = express();
 server.use(cors())
@@ -19,10 +21,10 @@ server.use(express.json());
 
 
 // ****************************** ROUTES *****************************
-
+server.use("/auth",authRouter)
 server.use("/user", userRouter)
-server.use("/user",experienceRouter)
-
+server.use("/profile", ProfileRouter)
+server.use("/profile",experienceRouter)
 //server.use(errorHandlers);
 
 console.table(listEndpoints(server)); 

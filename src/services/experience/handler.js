@@ -41,11 +41,7 @@ async function getAll(req,res,next){
 async function getById(req, res, next) {
     try {
       console.log(req.params.expId);
-      const userExperience = await ExperienceSchema.findById(req.params.expId, {
-        createdAt: 0,
-        updatedAt: 0,
-        __v: 0,
-      });
+      const userExperience = await ExperienceSchema.findById(req.params.expId).populate({path:"profile"});
       if (userExperience) {
         res.send(userExperience);
       } else {
@@ -63,9 +59,7 @@ async function getById(req, res, next) {
   async function newExperience(req, res, next) {
     try {
       const newExperience = new ExperienceSchema({
-        ...req.body, 
-        userName: req.params.userName
-      })
+        ...req.body});
       const {_id} = await newExperience.save();
   
       res.status(201).send({_id});

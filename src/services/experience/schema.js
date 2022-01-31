@@ -10,7 +10,7 @@ const ExperianceSchema = new Schema(
         startDate: { type: Date, required: true },
         endDate: { type: Date, default: null },
         position: { type: String, required: true },
-        
+        profileID: {type: Schema.Types.ObjectId,required:true, ref:"Profile"}
      
     },
       {

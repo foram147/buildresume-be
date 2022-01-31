@@ -1,27 +1,69 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt"
 //import mongoose_csv from "mongoose-csv";
-
+//import ExperianceSchema from '../experience/schema.js'
 const { Schema, model } = mongoose;
+
+/*export const ExperienceSchema = new mongoose.Schema(
+
+  {
+    role: { type: String, required: true },
+    company: { type: String, required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, default: null },
+    position: { type: String, required: true },
+    
+ 
+},
+  {
+    timestamps: true
+  }
+)*/
+
+
 
 const UserSchema = new Schema(
     {
      
-      image: { type: String},
+      //image: { type: String},
       name: { type: String, required: true },
       job: { type: String, required: true },
-      postaladdress: { type: String, required: true },
+      //postaladdress: { type: String, required: true },
       email: { type: String, required: true },
-      mobile: { type: Number, required: true },
-      dob: { type: String, required: true },
-      personalstatement: { type: String, required: true },
-      skills: { type: String, required: true },
-      hobbies: { type: String, required: true },
-      education: { type: String, required: true },
-      
+      password: { type: String, required: true },
+      //mobile: { type: Number, required: true },
+      //dob: { type: String, required: true },
+      //personalstatement: { type: String, required: true },
+      //skills: { type: String },
+      //hobbies: { type: String },
+      //experience: [{type:mongoose.Schema.Types.ObjectId,ref:"Experience"}]
   },
     { timestamps: true }
   );
   
+  UserSchema.pre("save", async function (done) {
+    //this.avatar = `https://ui-avatars.com/api/?name=${this.name}+${this.surname}`;
+    // hash password
+    if (this.isModified("password")) {
+      this.password = await bcrypt.hash(this.password, 12)
+    }
+    done();
+  });
+  
+  // static: find using credentials
+  
+  UserSchema.statics.findByCredentials = async function (email, password) {
+  
+    const user = await UserModel.findOne({ email })
+  
+    try {
+      if (await bcrypt.compare(password, user.password))
+        return user
+    } catch { }
+  
+    return null
+  }
+
   UserSchema.static("findCVByUserName", async function (query){
     const total = await this.countDocuments(query)
     const user = await this.find(query.criteria)
@@ -32,4 +74,5 @@ const UserSchema = new Schema(
     return{total,user }
   })
 
-  export default model("User", UserSchema);
+  const UserModel = mongoose.model("User",UserSchema)
+  export default UserModel;

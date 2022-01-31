@@ -3,7 +3,7 @@ import Experiences from "./handler.js"
 
 const experiencesRouter = express.Router()
 
-experiencesRouter.route("/:id/experiences")
+experiencesRouter.route("/:id/experience")
 .get(Experiences.getAll)
 .post(Experiences.newExperience)
 

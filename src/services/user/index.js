@@ -5,7 +5,7 @@ import createHttpError from "http-errors";
 import q2m from "query-to-mongo";
 import { generateCVPDF } from "../../utils/pdf/index.js";
 import { pipeline } from "stream";
-import { uploadProfilePicture } from "../../utils/upload/index.js";
+
 //import { checkBlogPostSchema, checkValidationResult } from "./validation.js";
 
 const userRouter = express.Router();
@@ -30,10 +30,9 @@ userRouter.get("/", async (req, res, next) => {
 
 userRouter.post(
     "/",
-    //checkBlogPostSchema,
-    //checkValidationResult,
     async (req, res, next) => {
       try {
+
         const newUser =  new UserSchema(req.body);
         const {_id} = await newUser.save()
         res.status(201).send({_id});
@@ -43,31 +42,6 @@ userRouter.post(
       }
     }
   );
-
-
-  userRouter.post(
-    "/:id/picture",
-    uploadProfilePicture,
-    async (req, res, next) => {
-      console.log(req.whatever)
-      try {
-        console.log(req.file)
-        const uploadPicture = await UserSchema.findByIdAndUpdate(
-          { _id: req.params.id },
-          { image: req.file.path },
-          { new: true }
-        );
-        if (uploadPicture) {
-          res.send("image uploaded");
-        } else {
-          next(createHttpError(404, `user id not found`));
-        }
-      } catch (error) {
-        next(error);
-      }
-    }
-  );
-
 
   userRouter.get("/:id", async (req, res, next) => {
     try {
@@ -111,25 +85,7 @@ userRouter.post(
     }
   });
   
-  userRouter.get("/:id/PDF", async (req, res, next) =>{
-    try{
-          const user = await UserSchema.findById(req.params.id)
-
-          if(!user){
-            res.status(404)
-            .send({message: `user id ${req.params.id} not found`})
-          } else{
-            const source = await generateCVPDF(user)
-            res.setHeader("Content-Disposition", `attachment; filename= user.pdf`)
-            const destination = res;
-            pipeline(source, destination,(err)=>{
-              if(err) next(err)
-            })
-          }
-    } catch(error){
-      next(error)
-    }
-  })
+ 
 
 
   export default userRouter;

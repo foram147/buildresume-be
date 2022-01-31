@@ -1,90 +1,95 @@
 import { checkSchema, validationResult } from "express-validator";
 
-const schema = {
-  title: {
+const userschema = {
+  name: {
     in: ["body"],
     isString: {
-      errorMessage: "title validation failed , type must be string  ",
+      errorMessage: "name validation failed , type must be string  ",
     },
   },
-  category: {
+  job: {
     in: ["body"],
     isString: {
-      errorMessage: "category validation failed , type must be  string ",
+      errorMessage: "job validation failed , type must be  string ",
     },
   },
-  content: {
+  postaladdress: {
     in: ["body"],
     isString: {
       errorMessage: "content validation failed , type must be string ",
     },
   },
-  "author.name": {
-    in: ["body"],
-    isString: {
-      errorMessage: "author.name validation failed , type must be string",
-    },
-  },
-  "author.avatar": {
-    in: ["body"],
-    isString: {
-      errorMessage: "author.avatar validation failed , type must be string",
-    },
-  },
-  "author.email": {
+  email: {
     in: ["body"],
     isEmail: {
-      errorMessage: "author.email validation failed , type must be email",
+      errorMessage: "content validation failed , type must be string ",
     },
   },
-  "readTime.value": {
+  mobile: {
     in: ["body"],
     isNumeric: {
-      errorMessage: "readTime.value  validation failed , type must be numeric ",
+      errorMessage: "content validation failed , type must be string ",
     },
   },
-  "readTime.unit": {
+  dob: {
+    in: ["body"],
+    isDate: {
+      errorMessage: "content validation failed , type must be string ",
+    },
+  },
+  personalstatement: {
     in: ["body"],
     isString: {
-      errorMessage: "readTime.unit  validation failed , type must be string ",
+      errorMessage: "content validation failed , type must be string ",
     },
   },
-  cover: {
+  skills: {
     in: ["body"],
     isString: {
-      errorMessage: "cover validation failed , type must be string",
+      errorMessage: "content validation failed , type must be string ",
     },
   },
-};
-
-const searchSchema = {
-  title: {
-    in: ["query"],
+  hobbies: {
+    in: ["body"],
     isString: {
-      errorMessage:
-        "title must be in query and type must be  string to search!",
+      errorMessage: "content validation failed , type must be string ",
     },
-  },
+  }
 };
 
-const commentSchema = {
-  text: {
+
+
+const experienceSchema = {
+  role: {
     isString: {
       errorMessage: "Text field is required for comment",
     },
   },
-  userName: {
+  company: {
     isString: {
       errorMessage: "User name is required for comment",
     },
   },
+  startDate: {
+    isDate: {
+      errorMessage: "Text field is required for comment",
+    },
+  },
+  endDate: {
+    isDate: {
+      errorMessage: "Text field is required for comment",
+    },
+  },
+  position: {
+    isString: {
+      errorMessage: "Text field is required for comment",
+    },
+  },
 };
 
-export const checkCommentSchema = checkSchema(commentSchema);
+export const checkExperienceSchema = checkSchema( experienceSchema);
 
-export const checkSearchSchema = checkSchema(searchSchema);
-
-export const checkBlogPostSchema = checkSchema(schema);
+export const checkuserschema = checkSchema(userschema);
 
 export const checkValidationResult = (req, res, next) => {
   const errors = validationResult(req);
