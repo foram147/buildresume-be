@@ -6,7 +6,7 @@ import q2m from "query-to-mongo";
 import { generateCVPDF } from "../../utils/pdf/index.js";
 import { pipeline } from "stream";
 
-//import { checkBlogPostSchema, checkValidationResult } from "./validation.js";
+
 
 const userRouter = express.Router();
 
@@ -14,11 +14,11 @@ const userRouter = express.Router();
 userRouter.get("/", async (req, res, next) => {
   try {
     const mongoQuery = q2m(req.query)
-    const {total, user} = await UserSchema.findCVByUserName(mongoQuery)
+    //const {total, user} = await UserSchema.find()
     
-    //const template = await TemplateSchema.find();
+    const {total,user} = await UserSchema.findUser(mongoQuery);
     res.send({
-      links: mongoQuery.links("/templates", total),
+      links: mongoQuery.links("/user", total),
       pageTotal: Math.ceil(total / mongoQuery.options.limit),
       total,
       user,
@@ -45,13 +45,13 @@ userRouter.post(
 
   userRouter.get("/:id", async (req, res, next) => {
     try {
-      const template = await UserSchema.findById(req.params.id);
-      if (!template) {
+      const user = await UserSchema.findById(req.params.id);
+      if (!user) {
         res
           .status(404)
-          .send({ message: `template with ${req.params.id} is not found!` });
+          .send({ message: `user with ${req.params.id} is not found!` });
       } else {
-        res.send(template);
+        res.send(user);
       }
     } catch (error) {
       next(error)//res.send(500).send({ message: error.message });

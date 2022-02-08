@@ -11,6 +11,7 @@ const EducationSchema = new Schema(
         degree: { type: String, required: true },
         institution: { type: String, required: true },
         course: { type: String, required: true },
+        userID: {type: Schema.Types.ObjectId,required:true, ref:"User"}
         
      
     },

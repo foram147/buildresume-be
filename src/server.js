@@ -23,7 +23,7 @@ server.use(express.json());
 // ****************************** ROUTES *****************************
 server.use("/auth",authRouter)
 server.use("/user", userRouter)
-server.use("/profile", ProfileRouter)
+server.use("/user", ProfileRouter)
 server.use("/profile",experienceRouter)
 //server.use(errorHandlers);
 

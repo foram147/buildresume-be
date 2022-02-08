@@ -36,8 +36,10 @@ const UserSchema = new Schema(
       //personalstatement: { type: String, required: true },
       //skills: { type: String },
       //hobbies: { type: String },
+      //profile:[{type:mongoose.Schema.Types.ObjectId,ref:"Profile"}],
       //experience: [{type:mongoose.Schema.Types.ObjectId,ref:"Experience"}]
-  },
+      
+    },
     { timestamps: true }
   );
   
@@ -64,15 +66,15 @@ const UserSchema = new Schema(
     return null
   }
 
-  UserSchema.static("findCVByUserName", async function (query){
-    const total = await this.countDocuments(query)
-    const user = await this.find(query.criteria)
-    .limit(query.options.limit)
-    .skip(query.options.skip)
-    .sort(query.options.sort)
-
-    return{total,user }
-  })
+  UserSchema.static("findUser", async function (query) {
+    const total = await this.countDocuments(query);
+    const user = await this.find()
+      .limit(query.options.limit)
+      .skip(query.options.skip)
+      .sort(query.options.sort);
+  
+    return { total, user };
+  });
 
   const UserModel = mongoose.model("User",UserSchema)
   export default UserModel;

@@ -37,7 +37,7 @@ const ProfileSchema = new Schema(
       skills: { type: String },
       hobbies: { type: String },
       education:{default:[],type:[EducationSchema]},
-      experience: [{type:mongoose.Schema.Types.ObjectId,ref:"Experience"}]
+      //experience: [{type:mongoose.Schema.Types.ObjectId,ref:"Experience"}]
   },
     { timestamps: true }
   );

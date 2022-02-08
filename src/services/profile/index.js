@@ -4,11 +4,13 @@ import { JwtMiddleware } from "../../utils/auth/jwt.js";
 import onlyOwner from "../../utils/auth/onlyOwner.js";
 import Profile from "./schema.js";
 import { uploadProfilePicture } from "../../utils/upload/index.js";
-
+import createHttpError from "http-errors";
+import { generateCVPDF } from "../../utils/pdf/index.js";
+import { pipeline } from "stream";
 const Profilerouter = express.Router();
 
 // get profile
-Profilerouter.get("/", async (req, res, next) => {
+Profilerouter.get("/:id/profile", async (req, res, next) => {
   try {
     const profile = await Profile.find({}).populate({
       path: "user",
@@ -25,7 +27,7 @@ Profilerouter.post(
   "/:id/picture",
   uploadProfilePicture,
   async (req, res, next) => {
-    console.log(req.whatever)
+    //console.log(req.whatever)
     try {
       console.log(req.file)
       const uploadPicture = await Profile.findByIdAndUpdate(
@@ -44,15 +46,16 @@ Profilerouter.post(
   }
 );
 
-Profilerouter.get("/:id/PDF", async (req, res, next) =>{
+Profilerouter.get("/:id/profile/PDF", async (req, res, next) =>{
   try{
-        const user = await Profile.findById(req.params.id)
+        const profile = await Profile.findById(req.params.id).populate({ path: "user", select: "name email job"})
 
-        if(!user){
+        if(!profile){
           res.status(404)
           .send({message: `user id ${req.params.id} not found`})
         } else{
-          const source = await generateCVPDF(user)
+          //const userValues = Object.values(user)
+          const source = await generateCVPDF(profile)
           res.setHeader("Content-Disposition", `attachment; filename= user.pdf`)
           const destination = res;
           pipeline(source, destination,(err)=>{
@@ -66,7 +69,7 @@ Profilerouter.get("/:id/PDF", async (req, res, next) =>{
 
 // create  profile
 Profilerouter.post(
-  "/",
+  "/:id/profile",
   JwtMiddleware,
   (req, res, next) => {
     req.body.user = req.user._id.toString()

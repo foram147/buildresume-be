@@ -1,7 +1,7 @@
 import express from "express";
 import UserModel from "../user/schema.js"
 import {generateJwt} from "../../utils/auth/jwt.js"
-
+import Profile from "../profile/schema.js"
 
 const authRouter = express.Router();
 
@@ -19,9 +19,10 @@ authRouter.post('/login',async (req,res,next)=>{
             error.status = 400
              throw error
         }
+        const id= user._id
+        const token = await generateJwt({id})
 
-        const token = await generateJwt({id:user._id})
-        res.status(200).send({token})
+        res.status(200).send({token,id})
 
     }catch(error){
         next(error)
