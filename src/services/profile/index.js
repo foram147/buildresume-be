@@ -2,20 +2,18 @@ import express from "express";
 import basicMiddleware from "../../utils/auth/basic.js";
 import { JwtMiddleware } from "../../utils/auth/jwt.js";
 import onlyOwner from "../../utils/auth/onlyOwner.js";
-import Profile from "./schema.js";
+import ProfileSchema from "./schema.js";
 import { uploadProfilePicture } from "../../utils/upload/index.js";
 import createHttpError from "http-errors";
 import { generateCVPDF } from "../../utils/pdf/index.js";
 import { pipeline } from "stream";
+//import UserModel from "../user/schema.js";
 const Profilerouter = express.Router();
 
-// get profile
-Profilerouter.get("/:id/profile", async (req, res, next) => {
+// get all profile
+Profilerouter.get("/", async (req, res, next) => {
   try {
-    const profile = await Profile.find({}).populate({
-      path: "user",
-      select: "email name job",
-    });
+    const profile = await ProfileSchema.find({})
     res.send(profile);
   } catch (error) {
     console.log({ error });
@@ -23,6 +21,7 @@ Profilerouter.get("/:id/profile", async (req, res, next) => {
   }
 });
 
+////--------------------- post picture
 Profilerouter.post(
   "/:id/picture",
   uploadProfilePicture,
@@ -30,7 +29,7 @@ Profilerouter.post(
     //console.log(req.whatever)
     try {
       console.log(req.file)
-      const uploadPicture = await Profile.findByIdAndUpdate(
+      const uploadPicture = await ProfileSchema.findByIdAndUpdate(
         { _id: req.params.id },
         { image: req.file.path },
         { new: true }
@@ -46,9 +45,11 @@ Profilerouter.post(
   }
 );
 
+
+//------------------- get PDF
 Profilerouter.get("/:id/profile/PDF", async (req, res, next) =>{
   try{
-        const profile = await Profile.findById(req.params.id).populate({ path: "user", select: "name email job"})
+        const profile = await ProfileSchema.findById(req.params.id).populate({ path: "user", select: "name email job"})
 
         if(!profile){
           res.status(404)
@@ -69,17 +70,14 @@ Profilerouter.get("/:id/profile/PDF", async (req, res, next) =>{
 
 // create  profile
 Profilerouter.post(
-  "/:id/profile",
+  "/profile",
   JwtMiddleware,
-  (req, res, next) => {
-    req.body.user = req.user._id.toString()
-    next()
-  },
-  //checkBlogPostSchema,
-  //checkValidationResult,
   async (req, res, next) => {
     try {
-      const profile = await new Profile(req.body).save();
+      const newProfile = {...req.body, user: req.user._id}
+      console.log(req.body)
+      const profile = await new ProfileSchema(newProfile).save();
+      
       res.status(201).send(profile);
     } catch (error) {
       console.log(error);
@@ -88,13 +86,14 @@ Profilerouter.post(
   }
 );
 
-Profilerouter.get("/:id", async (req, res, next) => {
+Profilerouter.get("/:id/profile", async (req, res, next) => {
   try {
-    const profile = await Profile.findById(req.params.id).populate({path:"user"})
-    if (!profile) {
+    //const id = req.params.id
+    const profile = await ProfileSchema.findOne({userId:req.params.id}).populate([{path:'user', select:'name job email'},{path:'experience',select:'position'}])
+        if (!profile) {
       res
         .status(404)
-        .send({ message: `blog with ${req.params.id} is not found!` });
+        .send({ message: `blog with ${id} is not found!` });
     } else {
       res.send(profile);
     }
@@ -105,7 +104,7 @@ Profilerouter.get("/:id", async (req, res, next) => {
 
 
 // delete  profile
-Profilerouter.delete("/:id", JwtMiddleware, onlyOwner, async (req, res, next) => {
+Profilerouter.delete("/profile", JwtMiddleware, onlyOwner, async (req, res, next) => {
   try {
     const profile = req.profile;
 
@@ -123,7 +122,7 @@ Profilerouter.delete("/:id", JwtMiddleware, onlyOwner, async (req, res, next) =>
 });
 
 //  update profile
-Profilerouter.put("/:id", async (req, res, next) => {
+Profilerouter.put("/profile", async (req, res, next) => {
   try {
     const updated = await Profile.findByIdAndUpdate(req.params.id, req.body, {
       new: true,

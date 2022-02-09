@@ -24,20 +24,12 @@ export const generateCVPDF = async (profile) => {
     const [id, extension] = fileName.split(".");
     const base64 = response.data.toString("base64");
     const base64Image = `data:image/${extension};base64,${base64}`;
-    imagePart = { image: base64Image, width:120, margin: [0, 0, 0, 40] };
+    imagePart = { image: base64Image};
     console.log(profile.user)
     //console.log(user.name)
   }
   const docDefinition = {
-    header: {
-      text: profile.user.name,
-
     
-    },
-    footer: {
-      text: profile.user.email,
-     
-    },
     content: [
       /*imagePart,
       {
@@ -55,22 +47,26 @@ export const generateCVPDF = async (profile) => {
        //{ text: striptags(user.job), lineHeight: 2 },*/
        {
         style: 'tableExample',
-        color: '#444',
         table: {
-          widths: [200, 'auto', 'auto'],
-          headerRows: 2,
-          // keepWithHeaderRows: 1,
+          width:['*','80%'],
+          //heights:[100,30,30,30,30,30,30,30,30],
           body: [
-            [imagePart , {}, { text: 'Header 3', style: 'tableHeader',colSpan: 2, alignment: 'center' }],
-            [{ text: 'Header 1', style: 'tableHeader', alignment: 'center' }, { text: 'Header 2', style: 'tableHeader', alignment: 'center' }, { text: 'Header 3', style: 'tableHeader', alignment: 'center' }],
-            ['Sample value 1', 'Sample value 2', 'Sample value 3'],
-            [{ rowSpan: 3, text: 'rowSpan set to 3\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor' }, 'Sample value 2', 'Sample value 3'],
-            ['', 'Sample value 2', 'Sample value 3'],
-            ['Sample value 1', 'Sample value 2', 'Sample value 3'],
-            ['Sample value 1', { colSpan: 2, rowSpan: 2, text: 'Both:\nrowSpan and colSpan\ncan be defined at the same time' }, ''],
-            ['Sample value 1', '', ''],
+            //['', ''],
+            [imagePart, {text:[
+              'Personal  Statement: \n ',
+              {text:profile.personalstatement,alignment:'center'}
+            ]}],
+            [{text:profile.user.name,alignment: 'center',},{}],
+            [{text:profile.user.job,alignment: 'center',},{}],
+            [{text:profile.postaladdress,alignment: 'center',},{}],
+            [{text:profile.user.email,alignment: 'center',},{}],
+            [{text:profile.mobile,alignment: 'center',},{}],
+            [{text:profile.dob,alignment: 'center',},{}],
+            [{text:profile.skills,alignment: 'center',},{}],
+            [{text:profile.hobbies,alignment: 'center',},{}]
           ]
-        }
+        },
+        //layout: 'noBorders'
       },
     ],
   };

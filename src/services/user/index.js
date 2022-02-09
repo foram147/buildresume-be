@@ -10,7 +10,7 @@ import { pipeline } from "stream";
 
 const userRouter = express.Router();
 
-// get all template
+// get all users
 userRouter.get("/", async (req, res, next) => {
   try {
     const mongoQuery = q2m(req.query)

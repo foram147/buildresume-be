@@ -5,7 +5,9 @@ import User from "../user/schema.js";
 //import ExperianceSchema from '../experience/schema.js'
 const { Schema, model } = mongoose;
 
-
+const skillsSchema = new mongoose.Schema({
+  skills:{type:String,required:true}
+})
 const EducationSchema = new mongoose.Schema( {
         
     startDate: { type: Date, required: true },
@@ -24,7 +26,7 @@ const EducationSchema = new mongoose.Schema( {
 
 const ProfileSchema = new Schema(
     {
-      user:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
+      user:{type:Schema.Types.ObjectId,required:true, ref:"User"},
       image: { type: String},
       //name: { type: String, required: true },
       //job: { type: String, required: true },
@@ -37,10 +39,20 @@ const ProfileSchema = new Schema(
       skills: { type: String },
       hobbies: { type: String },
       education:{default:[],type:[EducationSchema]},
-      //experience: [{type:mongoose.Schema.Types.ObjectId,ref:"Experience"}]
+      experience: [{type:Schema.Types.ObjectId,ref:"Experience"}]
   },
     { timestamps: true }
   );
+
+  ProfileSchema.static("findByUserId", async function (query) {
+    const total = await this.countDocuments(query);
+    const profile = await this.find(query.criteria)
+      .limit(query.options.limit)
+      .skip(query.options.skip)
+      .sort(query.options.sort);
+  
+    return { total, profile };
+  });
   export default model("Profile", ProfileSchema);
  ProfileSchema.pre("save", async function (done){
      try{

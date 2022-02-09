@@ -4,21 +4,7 @@ import bcrypt from "bcrypt"
 //import ExperianceSchema from '../experience/schema.js'
 const { Schema, model } = mongoose;
 
-/*export const ExperienceSchema = new mongoose.Schema(
 
-  {
-    role: { type: String, required: true },
-    company: { type: String, required: true },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, default: null },
-    position: { type: String, required: true },
-    
- 
-},
-  {
-    timestamps: true
-  }
-)*/
 
 
 
@@ -29,7 +15,7 @@ const UserSchema = new Schema(
       name: { type: String, required: true },
       job: { type: String, required: true },
       //postaladdress: { type: String, required: true },
-      email: { type: String, required: true },
+      email: { type: String, required: true,unique:true },
       password: { type: String, required: true },
       //mobile: { type: Number, required: true },
       //dob: { type: String, required: true },
