@@ -1,37 +1,29 @@
 import createHttpError from "http-errors";
 import q2m from "query-to-mongo"
-import ExperienceSchema from "../experience/schema.js";
+import ProfileSchema from "../profile/schema.js"
+import ExperienceSchema from "./schema.js"
 
 async function getAll(req,res,next){
     try {
         const mongoQuery = q2m(req.query);
     
-        const total = await ExperienceSchema.countDocuments({
-          userName: req.params.userName,
-        });
+        const total = await ExperienceSchema.countDocuments({});
     
-        const userExperiences = await ExperienceSchema.find({
-          ...mongoQuery.criteria, userName: req.params.userName}, {
-          createdAt: 0,
-          updatedAt: 0,
-          __v:0
-        })
-          .limit(mongoQuery.options.limit)
-          .skip(mongoQuery.options.skip)
-          .sort(mongoQuery.options.sort);
-    
-        if (userExperiences) {
-          res.send({
-            ...(mongoQuery.options.limit && {
-              pageAmount: mongoQuery.links(`/user/${req.params.userName}/experiences`, total),
-              links: Math.ceil(total / mongoQuery.options.limit),
-            }),
-            total,
-            experiences: userExperiences,
-          });
-        } else {
-          next(createHttpError(404, "User experiences not available."));
-        }
+        
+        const experiences = await ExperienceSchema.find({...mongoQuery})
+        .limit(mongoQuery.options.limit)
+        .skip(mongoQuery.options.skip)
+        .sort(mongoQuery.options.sort)
+        
+        
+        res.send({
+          ...(mongoQuery.options.limit && {
+            pageAmount: mongoQuery.links(`/experience`, total),
+        links: Math.ceil(total/ mongoQuery.options.limit),
+      }),
+      total,
+      experiences
+    })
       } catch (error) {
         console.log(error);
         next(error);
@@ -40,9 +32,9 @@ async function getAll(req,res,next){
 
 async function getById(req, res, next) {
     try {
-      console.log(req.params.expId);
-      const userExperience = await ExperienceSchema.findById(req.params.expId).populate({path:"profile"});
-      if (userExperience) {
+      console.log(req.params.id);
+      const userExperience = await ExperienceSchema.findById(req.params.id)
+         if (userExperience) {
         res.send(userExperience);
       } else {
         next(
@@ -55,18 +47,50 @@ async function getById(req, res, next) {
     }
   }
   
+//************ GET BY PROFILE ID */
+async function profExp(req, res, next) {
+  try {
+    const id = req.params.id
+    console.log(req.params.id);
+    const userExperience = await ExperienceSchema.find({profileId:id})
+       if (userExperience) {
+      res.send(userExperience);
+    } else {
+      next(
+        createHttpError(404, `No experience found with id: ${req.params.expId}`)
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
   // ****** POST NEW EXPERIENCE *******
   async function newExperience(req, res, next) {
+
     try {
-      const newExperience = new ExperienceSchema({
-        ...req.body});
-      const {_id} = await newExperience.save();
+          const id = req.params.id
+          
+          const experience =  new ExperienceSchema(req.body)
+          experience.profileId = id
+          await experience.save()
   
-      res.status(201).send({_id});
-    } catch (error) {
-      console.log(error);
-      next(error);
-    }
+          console.log(experience)
+          if(experience){
+              const updatedProfile = await ProfileSchema.findOneAndUpdate(
+                  {_id: id},
+                  { $push: { experience: experience._id}},
+                  { new: true }
+              )
+              res.status(201).send(updatedProfile)
+          } else {
+              res.status(404).send("Experience with id ${id} not found") 
+          }
+      } catch (error) {
+         console.error(error) 
+      }
+  
   }
 
   async function updateExperience(req, res, next) {
@@ -99,5 +123,5 @@ async function getById(req, res, next) {
   }
   
   export default {
-    getAll, getById, newExperience, updateExperience, deleteExperience
+    getAll, getById, profExp ,newExperience, updateExperience, deleteExperience
   }

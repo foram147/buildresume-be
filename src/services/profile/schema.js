@@ -53,8 +53,12 @@ const ProfileSchema = new Schema(
   
     return { total, profile };
   });
+  
+  
   export default model("Profile", ProfileSchema);
- ProfileSchema.pre("save", async function (done){
+ 
+ 
+  ProfileSchema.pre("save", async function (done){
      try{
          const isExist = await User.findById(this.user)
          if(isExist){

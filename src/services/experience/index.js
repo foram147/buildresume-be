@@ -3,12 +3,14 @@ import Experiences from "./handler.js"
 
 const experiencesRouter = express.Router()
 
-experiencesRouter.route("/:id/experience")
+experiencesRouter.route("/")
 .get(Experiences.getAll)
-.post(Experiences.newExperience)
+experiencesRouter.route("/:id")
+.get(Experiences.profExp)
 
-experiencesRouter.route("/:id/experiences/:expId")
+experiencesRouter.route("/:id")
 .get(Experiences.getById)
+.post(Experiences.newExperience)
 .put(Experiences.updateExperience)
 .delete(Experiences.deleteExperience);
 

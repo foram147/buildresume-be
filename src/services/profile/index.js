@@ -1,4 +1,5 @@
 import express from "express";
+import q2m from "query-to-mongo"
 import basicMiddleware from "../../utils/auth/basic.js";
 import { JwtMiddleware } from "../../utils/auth/jwt.js";
 import onlyOwner from "../../utils/auth/onlyOwner.js";
@@ -7,17 +8,33 @@ import { uploadProfilePicture } from "../../utils/upload/index.js";
 import createHttpError from "http-errors";
 import { generateCVPDF } from "../../utils/pdf/index.js";
 import { pipeline } from "stream";
+import { profile } from "console";
 //import UserModel from "../user/schema.js";
 const Profilerouter = express.Router();
 
 // get all profile
 Profilerouter.get("/", async (req, res, next) => {
   try {
-    const profile = await ProfileSchema.find({})
-    res.send(profile);
+    const mongoQuery = q2m(req.query)
+    const total = await ProfileSchema.countDocuments({})
+
+    const profile = await ProfileSchema.find({...mongoQuery}).populate({ path: "user", select: "name email job"})
+    .populate({ path: "experience",select:"position role"})
+    .limit(mongoQuery.options.limit)
+    .skip(mongoQuery.options.skip)
+    .sort(mongoQuery.options.sort)
+
+    res.send({
+      ...(mongoQuery.options.limit && {
+        pageAmount: mongoQuery.links(`/profile`, total),
+    links: Math.ceil(total/ mongoQuery.options.limit),
+  }),
+  total,
+  profile
+});
   } catch (error) {
     console.log({ error });
-    res.send(500).send({ message: error.message });
+    res.status(500).send({ message: error.message });
   }
 });
 
@@ -47,7 +64,7 @@ Profilerouter.post(
 
 
 //------------------- get PDF
-Profilerouter.get("/:id/profile/PDF", async (req, res, next) =>{
+Profilerouter.get("/:id/PDF", async (req, res, next) =>{
   try{
         const profile = await ProfileSchema.findById(req.params.id).populate({ path: "user", select: "name email job"})
 
@@ -70,7 +87,7 @@ Profilerouter.get("/:id/profile/PDF", async (req, res, next) =>{
 
 // create  profile
 Profilerouter.post(
-  "/profile",
+  "/:userId",
   JwtMiddleware,
   async (req, res, next) => {
     try {
@@ -85,15 +102,18 @@ Profilerouter.post(
     }
   }
 );
-
-Profilerouter.get("/:id/profile", async (req, res, next) => {
+//////------------------- get by userid
+Profilerouter.get("/:id", async (req, res, next) => {
   try {
-    //const id = req.params.id
-    const profile = await ProfileSchema.findOne({userId:req.params.id}).populate([{path:'user', select:'name job email'},{path:'experience',select:'position'}])
+    const id = req.params.id
+    const profile = await ProfileSchema.findOne({user:id})
+    .populate({ path: "user", select: "name email job"})
+    .populate({ path: "experience",select:"position role"})
+
         if (!profile) {
       res
         .status(404)
-        .send({ message: `blog with ${id} is not found!` });
+        .send({ message: `profile with  is not found!` });
     } else {
       res.send(profile);
     }
@@ -104,14 +124,14 @@ Profilerouter.get("/:id/profile", async (req, res, next) => {
 
 
 // delete  profile
-Profilerouter.delete("/profile", JwtMiddleware, onlyOwner, async (req, res, next) => {
+Profilerouter.delete("/:id", JwtMiddleware, onlyOwner, async (req, res, next) => {
   try {
     const profile = req.profile;
 
     if (!profile) {
       res
         .status(404)
-        .send({ message: `blog with ${req.params.id} is not found!` });
+        .send({ message: `profile with ${req.params.id} is not found!` });
     } else {
       await Profile.findByIdAndDelete(req.params.id);
       res.status(204).send();
@@ -122,9 +142,9 @@ Profilerouter.delete("/profile", JwtMiddleware, onlyOwner, async (req, res, next
 });
 
 //  update profile
-Profilerouter.put("/profile", async (req, res, next) => {
+Profilerouter.put("/:id", async (req, res, next) => {
   try {
-    const updated = await Profile.findByIdAndUpdate(req.params.id, req.body, {
+    const updated = await ProfileSchema.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
     res.send(updated);
