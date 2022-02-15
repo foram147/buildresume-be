@@ -5,9 +5,23 @@ import User from "../user/schema.js";
 //import ExperianceSchema from '../experience/schema.js'
 const { Schema, model } = mongoose;
 
-const skillsSchema = new mongoose.Schema({
-  skills:{type:String,required:true}
+const SkillsSchema = new mongoose.Schema( {
+  
+    skill:{type:String,required:true}
+  },
+  {
+    timestamps: true
+  
 })
+const HobbiesSchema = new mongoose.Schema( {
+ 
+   hobby:{type:String,required:true}
+  },
+  {
+    timestamps: true
+  
+})
+
 const EducationSchema = new mongoose.Schema( {
         
     startDate: { type: Date, required: true },
@@ -28,16 +42,12 @@ const ProfileSchema = new Schema(
     {
       user:{type:Schema.Types.ObjectId,required:true, ref:"User"},
       image: { type: String},
-      //name: { type: String, required: true },
-      //job: { type: String, required: true },
       postaladdress: { type: String, required: true },
-      //email: { type: String, required: true },
-      //password: { type: String, required: true },
       mobile: { type: Number, required: true },
       dob: { type: String, required: true },
       personalstatement: { type: String, required: true },
-      skills: { type: String },
-      hobbies: { type: String },
+      skills: {default:[],type:[SkillsSchema]},
+      hobbies: {default:[],type:[HobbiesSchema]},
       education:{default:[],type:[EducationSchema]},
       experience: [{type:Schema.Types.ObjectId,ref:"Experience"}]
   },

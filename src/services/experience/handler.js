@@ -52,12 +52,12 @@ async function profExp(req, res, next) {
   try {
     const id = req.params.id
     console.log(req.params.id);
-    const userExperience = await ExperienceSchema.find({profileId:id})
+    const userExperience = await ExperienceSchema.findOne({profileId:id})
        if (userExperience) {
       res.send(userExperience);
     } else {
       next(
-        createHttpError(404, `No experience found with id: ${req.params.expId}`)
+        createHttpError(404, `No experience found with id: ${req.params.id}`)
       );
     }
   } catch (error) {
@@ -96,7 +96,7 @@ async function profExp(req, res, next) {
   async function updateExperience(req, res, next) {
     try {
       const editedExperience = await ExperienceSchema.findByIdAndUpdate(
-        { _id: req.params.expId },
+        { _id: req.params.id },
         { ...req.body},
         { new: true }
       );
@@ -114,8 +114,8 @@ async function profExp(req, res, next) {
   // ****** DELETE EXPERIENCE *********
   async function deleteExperience(req, res, next) {
     try {
-      await ExperienceSchema.findOneAndDelete(req.params.expId);
-      res.status(204).send();
+      await ExperienceSchema.findByIdAndRemove(req.params.id);
+      res.status(204).send({message:`deleted`});
     } catch (error) {
       console.log(error);
       next(error);

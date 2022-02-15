@@ -9,7 +9,7 @@ experiencesRouter.route("/:id")
 .get(Experiences.profExp)
 
 experiencesRouter.route("/:id")
-.get(Experiences.getById)
+//.get(Experiences.getById)
 .post(Experiences.newExperience)
 .put(Experiences.updateExperience)
 .delete(Experiences.deleteExperience);
