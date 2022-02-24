@@ -70,6 +70,7 @@ async function profExp(req, res, next) {
   async function newExperience(req, res, next) {
 
     try {
+      console.log(req.body)
           const id = req.params.id
           
           const experience =  new ExperienceSchema(req.body)

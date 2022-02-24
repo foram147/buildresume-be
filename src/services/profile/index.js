@@ -18,8 +18,10 @@ Profilerouter.get("/", async (req, res, next) => {
     const mongoQuery = q2m(req.query)
     const total = await ProfileSchema.countDocuments({})
 
-    const profile = await ProfileSchema.find({...mongoQuery}).populate({ path: "user", select: "name email job"})
+    const profile = await ProfileSchema.find({...mongoQuery})
+    .populate({ path: "user", select: "name email job"})
     .populate({ path: "experience",select:"position role"})
+
     .limit(mongoQuery.options.limit)
     .skip(mongoQuery.options.skip)
     .sort(mongoQuery.options.sort)
@@ -132,6 +134,8 @@ Profilerouter.get("/:id", async (req, res, next) => {
     const profile = await ProfileSchema.findById(req.params.id)
     .populate({ path: "user", select: "name email job"})
     .populate({ path: "experience",select:"position role"})
+    .populate({ path: "skills", select: "skill"})
+    .populate({ path: "hobbies", select: "hobby"})
 
         if (!profile) {
       res
@@ -181,6 +185,7 @@ Profilerouter.put("/:id", async (req, res, next) => {
 ///--------------------------- add skills
 Profilerouter.post("/:id/skills",async(req,res,next)=>{
   try{
+    console.log(req.params.id)
       const profile = await ProfileSchema.findOneAndUpdate(req.params.id);
       
       if(!profile){
@@ -213,8 +218,7 @@ Profilerouter.get("/:id/skills", async (req, res, next) => {
     //const id = req.params.id
     console.log(req.params.id)
     const profile = await ProfileSchema.findById(req.params.id)
-    .populate({ path: "user", select: "name email job"})
-    .populate({ path: "experience",select:"position role"})
+   
 
         if (!profile) {
       res
@@ -324,8 +328,7 @@ Profilerouter.get("/:id/hobbies", async (req, res, next) => {
     //const id = req.params.id
     console.log(req.params.id)
     const profile = await ProfileSchema.findById(req.params.id)
-    .populate({ path: "user", select: "name email job"})
-    .populate({ path: "experience",select:"position role"})
+
 
         if (!profile) {
       res
@@ -432,8 +435,7 @@ Profilerouter.get("/:id/education", async (req, res, next) => {
     //const id = req.params.id
     console.log(req.params.id)
     const profile = await ProfileSchema.findById(req.params.id)
-    .populate({ path: "user", select: "name email job"})
-    .populate({ path: "experience",select:"position role"})
+  
 
         if (!profile) {
       res
@@ -446,6 +448,11 @@ Profilerouter.get("/:id/education", async (req, res, next) => {
     res.status(500).send({ message: error.message });
   }
 });
+
+
+//----------------- get education by education Id
+
+
 
 //------------------ edit education
 Profilerouter.put("/:id/education/:educationId",async(req,res,next)=>{

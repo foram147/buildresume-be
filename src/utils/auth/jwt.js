@@ -37,14 +37,14 @@ export async function JwtMiddleware(req, res, next) {
         } else {
             const token = req.headers.authorization.replace("Bearer ", '')
 
-            console.log(token)
+            console.log("token",token)
 
             const decoded = await verifyJwt(token)
 
-            console.log(decoded)
+            console.log("decoded",decoded)
             const user = await UserModel.findById(decoded.id)
 
-            console.log(user)
+            console.log("user",user)
 
             req.user = user
 

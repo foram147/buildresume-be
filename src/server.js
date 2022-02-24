@@ -15,7 +15,7 @@ import authRouter from "./services/auth/index.js";
 import ProfileRouter from "./services/profile/index.js"
 // ***************************** MIDDLEWARS**************************
 const server = express();
-server.use(cors())
+server.use(cors("*"))
 const { PORT, MONGO_CONNECTION_STRING } = process.env;
 server.use(express.json());
 

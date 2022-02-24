@@ -7,7 +7,7 @@ const { Schema, model } = mongoose;
 
 const SkillsSchema = new mongoose.Schema( {
   
-    skill:{type:String,required:true}
+    skills:{type:String,required:true}
   },
   {
     timestamps: true
@@ -15,7 +15,7 @@ const SkillsSchema = new mongoose.Schema( {
 })
 const HobbiesSchema = new mongoose.Schema( {
  
-   hobby:{type:String,required:true}
+   hobbies:{type:String,required:true}
   },
   {
     timestamps: true
@@ -24,12 +24,12 @@ const HobbiesSchema = new mongoose.Schema( {
 
 const EducationSchema = new mongoose.Schema( {
         
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, default: null },
+    
     degree: { type: String, required: true },
     institution: { type: String, required: true },
     course: { type: String, required: true },
-    
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, default: null },
  
 },
   {
