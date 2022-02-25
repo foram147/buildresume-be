@@ -5,7 +5,7 @@ import multer from "multer";
 const cloudinaryProfileStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "profileImages"
+    folder: "buildresume"
   }
 })
 
