@@ -8,7 +8,7 @@ const ExperienceSchema = new Schema(
         role: { type: String, required: true },
         company: { type: String, required: true },
         startDate: { type: Date, required: true },
-        endDate: { type: Date, default: null },
+        endDate: { type: Date, default:null},
         position: { type: String, required: true },
         profileId: {type: Schema.Types.ObjectId, ref:"Profile"}
      

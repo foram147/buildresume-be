@@ -2,6 +2,7 @@ import PdfPrinter from "pdfmake";
 import striptags from "striptags";
 import axios from "axios";
 
+
 const fonts = {
   Roboto: {
     normal: "Helvetica",
@@ -31,20 +32,7 @@ export const generateCVPDF = async (profile) => {
   const docDefinition = {
     
     content: [
-      /*imagePart,
-      {
-      ul: [
-        { margin: [5, 10, 5, 20], text: profile.mobile },
-        { margin: [5, 10, 5, 20], text: profile.dob },
-        { margin: [5, 10, 5, 20], text: profile.personalstatement },
-        { margin: [5, 10, 5, 20], text: profile.skills },
-        { margin: [5, 10, 5, 20], text: profile.education.insitution },
-        { margin: [5, 10, 5, 20], text: profile.user.name },
-        { margin: [5, 10, 5, 20], text: profile.user.job },
-       
-      ],
-    }
-       //{ text: striptags(user.job), lineHeight: 2 },*/
+      
        {
         style: 'tableExample',
         table: {
@@ -56,14 +44,17 @@ export const generateCVPDF = async (profile) => {
               'Personal  Statement: \n ',
               {text:profile.personalstatement,alignment:'center'}
             ]}],
-            [{text:profile.user.name,alignment: 'center',},{}],
+            [{text:profile.user.name,alignment: 'center',},{text:[
+              'Personal Experience: \n ',
+              {text:profile.experience.position,alignment:'center'},
+              {text:profile.experience.startDate,alignment:'center'},
+            ]}],
             [{text:profile.user.job,alignment: 'center',},{}],
             [{text:profile.postaladdress,alignment: 'center',},{}],
             [{text:profile.user.email,alignment: 'center',},{}],
             [{text:profile.mobile,alignment: 'center',},{}],
             [{text:profile.dob,alignment: 'center',},{}],
-            [{text:profile.skills,alignment: 'center',},{}],
-            [{text:profile.hobbies,alignment: 'center',},{}]
+            
           ]
         },
         //layout: 'noBorders'

@@ -52,7 +52,7 @@ async function profExp(req, res, next) {
   try {
     const id = req.params.id
     console.log(req.params.id);
-    const userExperience = await ExperienceSchema.findOne({profileId:id})
+    const userExperience = await ExperienceSchema.find({profileId:id})
        if (userExperience) {
       res.send(userExperience);
     } else {

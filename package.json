@@ -32,6 +32,7 @@
     "pdf-creator-node": "^2.2.4",
     "pdfmake": "^0.2.4",
     "query-to-mongo": "^0.10.1",
+    "react-icons": "^4.3.1",
     "striptags": "^3.2.0",
     "uniqid": "^5.4.0"
   },

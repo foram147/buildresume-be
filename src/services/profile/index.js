@@ -54,7 +54,7 @@ Profilerouter.post(
         { new: true }
       );
       if (uploadPicture) {
-        res.send("image uploaded");
+        res.send(uploadPicture);
       } else {
         next(createHttpError(404, `user id not found`));
       }
@@ -133,7 +133,7 @@ Profilerouter.get("/:id", async (req, res, next) => {
     console.log(req.params.id)
     const profile = await ProfileSchema.findById(req.params.id)
     .populate({ path: "user", select: "name email job"})
-    .populate({ path: "experience",select:"position role"})
+    .populate({ path: "experience",select:"startDate endDate position role company"})
     .populate({ path: "skills", select: "skill"})
     .populate({ path: "hobbies", select: "hobby"})
 
